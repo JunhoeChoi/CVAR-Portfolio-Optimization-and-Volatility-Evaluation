@@ -104,6 +104,14 @@ Same Framework except for the objective function.
 
 ## Volatility Forcasting
 
+Evaluate with RMSE
+
+| Model      | RMSE          |
+| ---------- | ------------- |
+| GARCH(1,1) | **0.0039987** |
+| GJR-GARCH  | **0.0033963** |
+| SVR-GARCH  | **0.0028091** |
+
 ### Forecasting with GARCH
 <img src="Forecasting_GARCH.png">
 
