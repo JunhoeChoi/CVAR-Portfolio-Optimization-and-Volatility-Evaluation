@@ -97,7 +97,7 @@ Same Framework except for the objective function.
 | VaR (95%)             | **1.84%**  |
 | CVaR / ES (95%)       | **2.67%**  |
 
-<img src="Max sharpe vs CVaR.png">
+<img src="Max sharpe vs CvaR.png">
 
 ## Calculate risk with GARCH(1,1)
 <img src="GARCH.png">
