@@ -103,7 +103,13 @@ Same Framework except for the objective function.
 <img src="GARCH.png">
 
 ## Volatility Forcasting
+
+### Forecasting with GARCH
 <img src="Forecasting_GARCH.png">
+
+### Forecasting with GJR-GARCH
 <img src="Forecasting_GJR_GARCH.png">
+
+### Forecasting with SVR-GARCH
 <img src="Forecasting_SVR_GARCH.png">
 
