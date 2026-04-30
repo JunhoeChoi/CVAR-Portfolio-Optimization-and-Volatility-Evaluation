@@ -87,9 +87,17 @@ The core motivation: traditional mean-variance optimization ignores tail risk. T
 
 **CVaR-minimizing portfolio achieved a higher Sharpe Ratio (1.49 vs 1.39) with significantly lower tail risk (CVaR 1.90% vs 2.67%) compared to the Max-Sharpe portfolio.**
 
-<img src="plots/Portfolio Optimization/Max sharpe vs CvaR.png">
+<img src="plots/Portfolio Optimization/Max Sharpe vs CvaR.png">
+
+### Compare the return with S&P 500
 <img src="plots/Portfolio Optimization/Cumulative Return of CVaR and SnP.png">
+
+### CVaR Minimized Portfolio Weights
+
+#### Dynamics of CVaR Portfolio Weights
 <img src="plots/Portfolio Optimization/Portfolio Weight Dynamics.png">
+
+#### Optimal Asset Allocation by CVaR Optimization
 <img src="plots/Portfolio Optimization/CVaR Optimal Asset Allocation.png">
 
 ---
