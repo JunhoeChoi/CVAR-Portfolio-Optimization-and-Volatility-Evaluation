@@ -87,9 +87,9 @@ The core motivation: traditional mean-variance optimization ignores tail risk. T
 
 **CVaR-minimizing portfolio achieved a higher Sharpe Ratio (1.49 vs 1.39) with significantly lower tail risk (CVaR 1.90% vs 2.67%) compared to the Max-Sharpe portfolio.**
 
-<img src="Max sharpe vs CvaR.png">
-<img src="Compounded Return.png">
-<img src="Port Weights by Sectors.png">
+<img src="plots/Portfolio Optimization/Max sharpe vs CvaR.png">
+<img src="plots/Portfolio Optimization/Compounded Return.png">
+<img src="plots/Portfolio Optimization/Port Weights by Sectors.png">
 
 ---
 
@@ -132,10 +132,10 @@ Measures each asset's actual contribution to portfolio tail loss — incorporate
 
 SVR-GARCH outperformed classical GARCH models in out-of-sample volatility forecasting.
 
-<img src="GARCH.png">
-<img src="Forecasting_GARCH.png">
-<img src="Forecasting_GJR_GARCH.png">
-<img src="Forecasting_SVR_GARCH.png">
+<img src="plots/Portfolio Optimization/GARCH.png">
+<img src="plots/Portfolio Optimization/Forecasting_GARCH.png">
+<img src="plots/Portfolio Optimization/Forecasting_GJR_GARCH.png">
+<img src="plots/Portfolio Optimization/Forecasting_SVR_GARCH.png">
 
 ---
 
