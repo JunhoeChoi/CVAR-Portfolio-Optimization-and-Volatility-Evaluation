@@ -55,7 +55,7 @@ The core motivation: traditional mean-variance optimization ignores tail risk. T
 - Portfolio weights optimized ex ante based on historical tail behavior
 - For the theoretical derivation, see:
 
-[CVaR-Based Portfolio Optimization Theory Note](docs/CVaR_Portfolio_Optimization.pdf)
+[CVaR-Based Portfolio Optimization Theory Note](CVaR_Portfolio_Optimization.pdf)
 
 ### Constraints (Long-only)
 | Asset Group | Weight Bound |
