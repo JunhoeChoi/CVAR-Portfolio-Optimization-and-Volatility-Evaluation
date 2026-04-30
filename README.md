@@ -147,7 +147,31 @@ SVR-GARCH outperformed classical GARCH models in out-of-sample volatility foreca
 <img src="plots/Portfolio Optimization/Forecasting_SVR_GARCH.png">
 
 ---
+## Robustness of the VaR (VaR Backtesting)
 
+### CVaR Optimized Portfolio
+
+Result Summary 
+
+| Model          | Backtest Days | Exceptions | Avg. VaR | Avg. CVaR |
+| -------------- | ------------: | ---------: | -------: | --------: |
+| Historical VaR |           886 |         13 |    1.99% |     2.36% |
+| GARCH(1,1) VaR |         1,135 |         19 |    1.84% |     2.12% |
+| GJR-GARCH VaR  |         1,135 |         17 |    1.84% |       N/A |
+| SVR-GARCH VaR  |         1,135 |         13 |    2.01% |     3.03% |
+
+#### Check VaR Robustness
+<img src="plots/Portfolio Optimization/99 percent historical VaR (CVaR Opt).png">
+
+#### VaR models with GARCH
+<img src="plots/Portfolio Optimization/99 percent GARCH(1,1)-VaR.png">
+<img src="plots/Portfolio Optimization/99 percent gjr-GARCH VaR.png">
+<img src="plots/Portfolio Optimization/99 percent SVR-GARCH VaR.png">
+
+#### Max Sharpe Optimized Portfolio's VaR Backtesting results
+<img src="plots/Portfolio Optimization/99 percent historical VaR (Max Sharpe).png">
+
+---
 ## Stress Testing
 
 Two stress testing frameworks applied to the latest CVaR-optimized portfolio weights:
