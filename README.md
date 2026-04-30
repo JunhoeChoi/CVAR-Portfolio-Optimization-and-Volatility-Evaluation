@@ -53,6 +53,9 @@ The core motivation: traditional mean-variance optimization ignores tail risk. T
 - Minimizes CVaR at the **95% confidence level**
 - Uses the **Rockafellar–Uryasev LP formulation** (no parametric assumptions)
 - Portfolio weights optimized ex ante based on historical tail behavior
+- For the theoretical derivation, see:
+
+[CVaR-Based Portfolio Optimization Theory Note](docs/CVaR_Portfolio_Optimization.pdf)
 
 ### Constraints (Long-only)
 | Asset Group | Weight Bound |
