@@ -145,6 +145,10 @@ Two stress testing frameworks applied to the latest CVaR-optimized portfolio wei
 - Correlated random shocks: `correlated_returns = L @ Z`
 - Computed 95% VaR, 99% VaR, and 99% CVaR
 
+<img src="Monte Carlo Cholesky distribution result.png">
+
+---
+
 ### Framework 2: Crisis Stress Scenarios
 Four simultaneous stress shocks applied:
 
@@ -156,5 +160,13 @@ Four simultaneous stress shocks applied:
 | Equity Shock | Additional -10% deterministic shock to equity sector |
 
 Compared Normal vs. Stressed 99% VaR to quantify tail risk amplification under crisis conditions.
+
+#### Stress Test Results
+
+* Variance with Normal distribution
+<img src="EWMA stress test result.png">
+
+* EWMA Variance
+<img src="Stress test result.png">
 
 ---
