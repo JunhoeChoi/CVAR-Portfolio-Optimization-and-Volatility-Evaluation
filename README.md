@@ -6,7 +6,7 @@
 
 ## Overview
 
-This project builds a **CVaR-minimizing portfolio** using linear programming and evaluates its performance against Max-Sharpe and MVO portfolios. It also implements a full volatility forecasting pipeline using GARCH-family models — and rigorously stress tests the optimized portfolio under crisis scenarios.
+This project builds a **CVaR-minimizing portfolio** using linear programming and evaluates its performance against Max-Sharpe portfolios. It also implements a full volatility forecasting pipeline using GARCH-family models — and rigorously stress tests the optimized portfolio under crisis scenarios.
 
 The core motivation: traditional mean-variance optimization ignores tail risk. This project directly addresses that by minimizing **Conditional Value-at-Risk (CVaR)** at the 95% confidence level using the Rockafellar–Uryasev LP formulation — the industry-standard approach for tail risk optimization.
 
