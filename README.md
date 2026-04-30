@@ -1,5 +1,10 @@
-# CVAR-Portfolio-Optimization-and-Volatility-Evaluation
-CVaR(Conditional Value at Risk) Minimizing Portfolio verses Max Sharpe Ratio Verses MVO portfolio. Check risk metrics with VaR, ES and GARCH modeling. Moreover, conducted volatility forecasting.
+# CVAR Portfolio Optimization and Volatility Evaluation
+
+## Overview
+
+This project builds a CVaR-minimizing portfolio using linear programming and evaluates its performance against Max-Sharpe and MVO portfolios. It also implements a full volatility forecasting pipeline using GARCH-family models to assess and compare predictive accuracy.
+
+The key motivation: traditional mean-variance optimization ignores tail risk. This project directly addresses that by minimizing Conditional Value-at-Risk (CVaR), the expected loss beyond the VaR threshold — a metric increasingly central to institutional risk management.
 
 ### Data
 The portfolio consist of 12 major U.S. equities with defensive and diversifying assets such as cash, short-duration Treasuries, and gold.
