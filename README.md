@@ -148,7 +148,21 @@ Two stress testing frameworks applied to the latest CVaR-optimized portfolio wei
 - Correlated random shocks: `correlated_returns = L @ Z`
 - Computed 95% VaR, 99% VaR, and 99% CVaR
 
+#### Result
+
+| Metric | Value |
+|---|---:|
+| Annualized Return | 4.23% |
+| Annualized Volatility | 18.37% |
+| Sharpe Ratio | 0.23 |
+| Historical VaR (95%) | 1.89% |
+| Monte Carlo VaR (99%) | 2.67% |
+| Monte Carlo CVaR (99%) | 3.15% |
+| Historical VaR (99%) | 1.99% |
+
 <img src="plots/Stress Test results/Monte Carlo Cholesky distribution result.png">
+
+The baseline Monte Carlo Cholesky simulation estimates a 99% Monte Carlo VaR of 2.67% and a 99% Monte Carlo CVaR of 3.15%. These simulated tail-risk measures are higher than the 99% Historical VaR of 1.99%, suggesting that the covariance-based simulation captures a more conservative downside risk profile than the historical empirical quantile alone.
 
 ---
 
@@ -166,10 +180,17 @@ Compared Normal vs. Stressed 99% VaR to quantify tail risk amplification under c
 
 #### Stress Test Results
 
-* Variance with Normal distribution
+| Scenario | 99% Stress VaR | 99% Baseline Monte Carlo VaR | 99% Historical VaR | Interpretation |
+|---|---:|---:|---:|---|
+| Historical Volatility-Based Stress Test | 12.85% | 2.67% | 1.72% | Crisis stress scenario using historical volatility inputs before applying correlation breakdown, volatility amplification, and an equity-sector shock |
+| EWMA Volatility-Based Stress Test | 11.08% | 2.67% | 1.72% | Same crisis stress scenario using EWMA volatility inputs to incorporate recent volatility dynamics |
+
+The stress-test results show that portfolio downside risk increases materially under stressed covariance assumptions. The baseline 99% Monte Carlo VaR is 2.67%, while the estimated 99% Stress VaR rises to 12.85% under the stressed Monte Carlo Cholesky scenario and 11.08% under the EWMA-based stress scenario. This indicates that tail losses become significantly larger when the portfolio return distribution is shifted under stressed volatility and correlation conditions.
+
+* Historical Volatility-Based Stress Test
 <img src="plots/Stress Test results/EWMA stress test result.png">
 
-* EWMA Variance
+* EWMA Volatility-Based Stress Test
 <img src="plots/Stress Test results/Stress test result.png">
 
 ---
