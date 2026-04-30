@@ -1,128 +1,160 @@
-# CVAR Portfolio Optimization and Volatility Evaluation
+# CVaR Portfolio Optimization & Stress Testing
+
+> **Quantitative Risk Management | Python | Portfolio Optimization | Stress Testing**
+
+---
 
 ## Overview
 
-This project builds a CVaR-minimizing portfolio using linear programming and evaluates its performance against Max-Sharpe and MVO portfolios. It also implements a full volatility forecasting pipeline using GARCH-family models to assess and compare predictive accuracy.
+This project builds a **CVaR-minimizing portfolio** using linear programming and evaluates its performance against Max-Sharpe and MVO portfolios. It also implements a full volatility forecasting pipeline using GARCH-family models — and rigorously stress tests the optimized portfolio under crisis scenarios.
 
-The key motivation: traditional mean-variance optimization ignores tail risk. This project directly addresses that by minimizing Conditional Value-at-Risk (CVaR), the expected loss beyond the VaR threshold — a metric increasingly central to institutional risk management.
+The core motivation: traditional mean-variance optimization ignores tail risk. This project directly addresses that by minimizing **Conditional Value-at-Risk (CVaR)** at the 95% confidence level using the Rockafellar–Uryasev LP formulation — the industry-standard approach for tail risk optimization.
 
-### Data
-The portfolio consist of 12 major U.S. equities with defensive and diversifying assets such as cash, short-duration Treasuries, and gold.
+---
 
-* All data is from Yahoo Finance.
-* Data Period: 2020-01-01 - 2025-01-01
+### Skills Demonstrated
 
+- Tail risk optimization (CVaR minimization via linear programming)
+- Rolling-window portfolio backtesting and VaR violation tracking
+- Risk decomposition (Marginal ES, Component ES, ES Share)
+- Volatility forecasting and model selection (GARCH, GJR-GARCH, SVR-GARCH)
+- Stress testing under correlated crisis scenarios (Cholesky Monte Carlo, EWMA)
+- Portfolio performance benchmarking (CVaR-Min vs. Max-Sharpe)
+
+---
+
+### Tech Stack
+
+- **Python**: numpy, pandas, scipy, matplotlib, yfinance, arch, sklearn
+- **Optimization**: `scipy.optimize.linprog` (HiGHS), `scipy.optimize.minimize`
+- **Volatility Models**: GARCH(1,1), GJR-GARCH, SVR-GARCH
+- **Stress Testing**: Cholesky decomposition, EWMA covariance, Monte Carlo simulation
+
+---
+
+## Portfolio Universe
+
+15 assets across 4 groups:
+
+| Group | Assets |
+|---|---|
+| Mega-cap Tech / Growth | NVDA, AAPL, MSFT, GOOGL, AMZN, META, AVGO, TSLA |
+| Financial | BRK-B, JPM |
+| Healthcare (Defensive) | UNH, JNJ |
+| Hedge / Cash | BIL, SHV, GLD |
+
+**Data**: Yahoo Finance, 2020-01-01 – 2025-01-01
+
+---
 
 ## CVaR Methodology
 
 ### CVaR-Based Portfolio Optimization (Linear Programming)
-* Construct a portfolio that minimizes Conditional Value-at-Risk (CVaR) at the 95% confidence level.
-* Focus on downside tail risk.
+- Minimizes CVaR at the **95% confidence level**
+- Uses the **Rockafellar–Uryasev LP formulation** (no parametric assumptions)
+- Portfolio weights optimized ex ante based on historical tail behavior
 
-### Framework
-* Define portfolio losses as the negative of asset returns.
-* Use the Rockafellar–Uryasev linear programming formulation of CVaR.
-* Estimate one-shot CVaR optimization using the full empirical distribution of daily returns (no parametric assumptions).
-* Portfolio weights are optimized ex ante based on historical tail behavior.
+### Constraints (Long-only)
+| Asset Group | Weight Bound |
+|---|---|
+| Core mega-cap (AAPL, MSFT) | Min 2%, Max 20% |
+| High-vol growth (NVDA, TSLA) | Max 15% |
+| Large-cap growth (GOOGL, AMZN, META, AVGO) | Max 18% |
+| Financial (BRK-B, JPM) | Max 15% |
+| Hedge / Cash (BIL, SHV, GLD) | Max 5% |
 
-### Constraints
-Asset-level weight bounds (Long-only portfolio)
-* Core mega-cap stocks (e.g., AAPL, MSFT): Min 2%, Max 20%
-* High-volatility growth stocks (e.g., NVDA, TSLA): Max 15%
-* Large-cap growth stocks (e.g., GOOGL, AMZN, META, AVGO): Max 18%
-* Financial stocks: cMax 15%
-* Cash, short-duration Treasuries, and gold: Max 5%
-* others : Max 15%
+### Weekly Rebalancing Strategy (26-Week Lookback)
+- Weights updated every Friday using past 26 weeks of daily returns
+- Daily returns tracked within each week
+- Avoids look-ahead bias by excluding current week from estimation window
 
-### Weekly Rebalancing CVaR Strategy (26-Week Lookback, Daily Return)
-* This section implements a weekly rebalanced CVaR-minimizing strategy.
-* This produces a daily return series for a strategy whose weights are updated weekly.
-* At each rebalance date (Friday), the model:
-    * estimates CVaR-minimizing weights using the past 26 weeks of daily returns, 
-    * applies those weights to construct the next week’s portfolio returns on a daily basis (i.e., daily return within the week).
-* Weights update weekly, but returns are measured daily.
-<br>
-<br>
-**Why Weekly?**
-   
-* More precise volatility / drawdown behavior analysis,
-* better alignment with daily risk reporting.
+---
 
-#### Result
-<img src="Port Weights by Sectors.png">
-<img src="Compounded Return.png">
+## Results
 
-| CVaR-Min              | Value      |
-| --------------------- | ---------- |
-| Annualized Return     | **20.32%** |
-| Annualized Volatility | **13.64%** |
-| Sharpe Ratio          | **1.49**   |
-| VaR (95%)             | **1.36%**  |
-| CVaR / ES (95%)       | **1.90%**  |
+### CVaR-Min vs. Max-Sharpe Portfolio
 
+| Metric | CVaR-Min | Max-Sharpe |
+|---|---|---|
+| Annualized Return | **20.32%** | 26.33% |
+| Annualized Volatility | **13.64%** | 18.98% |
+| Sharpe Ratio | **1.49** | 1.39 |
+| VaR (95%) | **1.36%** | 1.84% |
+| CVaR / ES (95%) | **1.90%** | 2.67% |
 
-## Calculate ES shares
-
-### Marginal ES
-* measures how much the portfolio’s Expected Shortfall would change if the weight of an asset were increased infinitesimally.
-* captures the tail riskiness of an asset itself, independent of its current portfolio weight.
-* reflects sensitivity
-
-### Component ES
-* measures how much of the portfolio’s Expected Shortfall is actually contributed by each asset.
-* incorporates both the asset’s tail behavior and its portfolio weight
-
-| Asset     | Mean Weight | Marginal ES | Component ES   | Component ES (Proxy) | ES Share     |
-| --------- | ----------- | ----------- | -------------- | -------------------- | ------------ |
-| NVDA      | 0.006123    | 0.043824    | 0.000282       | 0.000268             | 0.014820     |
-| AAPL      | 0.062246    | 0.029019    | 0.001785       | 0.001806             | 0.093965     |
-| MSFT      | 0.077158    | 0.030850    | 0.002463       | 0.002380             | 0.129656     |
-| GOOGL     | 0.045404    | 0.030960    | 0.001466       | 0.001406             | 0.077157     |
-| AMZN      | 0.053456    | 0.035819    | 0.001901       | 0.001915             | 0.100076     |
-| META      | 0.016018    | 0.033002    | 0.000506       | 0.000529             | 0.026650     |
-| AVGO      | 0.052246    | 0.026837    | 0.001661       | 0.001402             | 0.087437     |
-| TSLA      | 0.008246    | 0.042111    | 0.000336       | 0.000347             | 0.017678     |
-| BRK-B     | 0.150000    | 0.016045    | 0.002407       | 0.002407             | 0.126678     |
-| JPM       | 0.093825    | 0.020520    | 0.002220       | 0.001925             | 0.116839     |
-| UNH       | 0.135351    | 0.016169    | 0.002237       | 0.002188             | 0.117756     |
-| JNJ       | 0.150000    | 0.010222    | 0.001533       | 0.001533             | 0.080708     |
-| BIL       | 0.050000    | -0.000029   | -0.000001      | -0.000001            | -0.000076    |
-| SHV       | 0.050000    | 0.000017    | 0.000001       | 0.000001             | 0.000046     |
-| GLD       | 0.050000    | 0.004031    | 0.000202       | 0.000202             | 0.010608     |
-| **Total** |             |             | **0.01899867** |                      | **1.000000** |
-
-## Compare the result with Max-Sharpe Portfolio
-Same Framework except for the objective function.
-
-| Max-Shape             | Value      |
-| --------------------- | ---------- |
-| Annualized Return     | **26.33%** |
-| Annualized Volatility | **18.98%** |
-| Sharpe Ratio          | **1.39**   |
-| VaR (95%)             | **1.84%**  |
-| CVaR / ES (95%)       | **2.67%**  |
+**CVaR-minimizing portfolio achieved a higher Sharpe Ratio (1.49 vs 1.39) with significantly lower tail risk (CVaR 1.90% vs 2.67%) compared to the Max-Sharpe portfolio.**
 
 <img src="Max sharpe vs CvaR.png">
+<img src="Compounded Return.png">
+<img src="Port Weights by Sectors.png">
 
-## Calculate risk with GARCH(1,1)
+---
+
+## Risk Decomposition
+
+### Marginal ES
+Measures how much the portfolio's Expected Shortfall changes if the weight of an asset increases infinitesimally — captures tail riskiness independent of current weight.
+
+### Component ES
+Measures each asset's actual contribution to portfolio tail loss — incorporates both tail behavior and portfolio weight.
+
+| Asset | Mean Weight | Marginal ES | Component ES | ES Share |
+|---|---|---|---|---|
+| NVDA | 0.006 | 0.04382 | 0.000282 | 1.48% |
+| AAPL | 0.062 | 0.02902 | 0.001785 | 9.40% |
+| MSFT | 0.077 | 0.03085 | 0.002463 | 12.97% |
+| GOOGL | 0.045 | 0.03096 | 0.001466 | 7.72% |
+| AMZN | 0.053 | 0.03582 | 0.001901 | 10.01% |
+| META | 0.016 | 0.03300 | 0.000506 | 2.67% |
+| AVGO | 0.052 | 0.02684 | 0.001661 | 8.74% |
+| TSLA | 0.008 | 0.04211 | 0.000336 | 1.77% |
+| BRK-B | 0.150 | 0.01605 | 0.002407 | 12.67% |
+| JPM | 0.094 | 0.02052 | 0.002220 | 11.68% |
+| UNH | 0.135 | 0.01617 | 0.002237 | 11.78% |
+| JNJ | 0.150 | 0.01022 | 0.001533 | 8.07% |
+| BIL | 0.050 | -0.00003 | -0.000001 | -0.01% |
+| SHV | 0.050 | 0.00002 | 0.000001 | 0.00% |
+| GLD | 0.050 | 0.00403 | 0.000202 | 1.06% |
+| **Total** | | | **0.018999** | **100%** |
+
+---
+
+## Volatility Forecasting (GARCH Family)
+
+| Model | RMSE |
+|---|---|
+| GARCH(1,1) | 0.003999 |
+| GJR-GARCH | 0.003396 |
+| **SVR-GARCH** | **0.002809** |
+
+SVR-GARCH outperformed classical GARCH models in out-of-sample volatility forecasting.
+
 <img src="GARCH.png">
-
-## Volatility Forcasting
-
-Evaluate with RMSE
-
-| Model      | RMSE          |
-| ---------- | ------------- |
-| GARCH(1,1) | **0.0039987** |
-| GJR-GARCH  | **0.0033963** |
-| SVR-GARCH  | **0.0028091** |
-
-### Forecasting with GARCH
 <img src="Forecasting_GARCH.png">
-
-### Forecasting with GJR-GARCH
 <img src="Forecasting_GJR_GARCH.png">
-
-### Forecasting with SVR-GARCH
 <img src="Forecasting_SVR_GARCH.png">
 
+---
+
+## Stress Testing
+
+Two stress testing frameworks applied to the latest CVaR-optimized portfolio weights:
+
+### Framework 1: Monte Carlo (Cholesky Decomposition)
+- Simulated **10,000 daily portfolio returns** using Cholesky decomposition of the historical covariance matrix
+- Correlated random shocks: `correlated_returns = L @ Z`
+- Computed 95% VaR, 99% VaR, and 99% CVaR
+
+### Framework 2: Crisis Stress Scenarios
+Four simultaneous stress shocks applied:
+
+| Stress Factor | Assumption |
+|---|---|
+| Correlation Breakdown | All cross-asset correlations forced to 0.9 |
+| Volatility Shock | Asset volatilities doubled |
+| EWMA Covariance | Latest covariance via EWMA (λ=0.94) |
+| Equity Shock | Additional -10% deterministic shock to equity sector |
+
+Compared Normal vs. Stressed 99% VaR to quantify tail risk amplification under crisis conditions.
+
+---
