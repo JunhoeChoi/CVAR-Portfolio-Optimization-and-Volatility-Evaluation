@@ -299,4 +299,4 @@ Using lastest portfolio optimized weights, invest in three portfolios.
 
 Result
 
-<img src="plots/Appendix Cumulative Return of CVaR vs MVO vs SnP (2025).png">
+<img src="plots/Appendix Return of CVaR vs MVO vs SnP (2025).png">
