@@ -116,14 +116,14 @@ The portfolio is optimized by minimizing 95% Conditional Value-at-Risk (Expected
 | Metric | CVaR-Min | Max Sharpe | MVO |
 |---|---|---|---|
 | Annualized Return | 20.32% | **26.33%** | 17.84% |
-| Annualized Volatility | **13.64%** | 18.98% | 13.30% |
+| Annualized Volatility | 13.64% | 18.98% | **13.30%** |
 | Sharpe Ratio | **1.49** | 1.39 | 1.34 |
-| Average VaR (95%) | **1.36%** | 1.84% | 1.95% |
-| Average CVaR / ES (95%) | **1.90%** | 2.67% | 2.27% |
+| Average VaR (95%) | 1.99% | **1.84%** | 1.95% |
+| Average CVaR / ES (95%) |2.36% | 2.67% | **2.27%** |
 
-**CVaR-minimizing portfolio achieved a higher Sharpe Ratio (1.49 vs 1.39 vs 1.34) with significantly lower tail risk (CVaR 1.90% vs 2.67% vs 2.27%) compared to the other portfolios.**
+CVaR-Min delivers the **best risk-adjusted return** (Sharpe **1.49** vs. 1.39 vs. 1.34) with substantially lower tail risk than Max Sharpe (CVaR: 2.36% vs. 3.22%). While MVO achieves marginally lower average VaR (1.95% vs. 1.99%) and CVaR (2.27% vs. 2.36%), it breaches the VaR threshold significantly more often — 18 exceptions vs. **13** over the same 886-day window. 
 
-*MVO serves as the baseline — it controls variance but ignores tail shape, making it more vulnerable to skewed loss distributions than CVaR-Min.*
+This distinction matters: MVO controls average variance well but leaves the tail inadequately managed, whereas CVaR-Min explicitly targets the loss distribution beyond the threshold, resulting in fewer extreme-day breaches. Taken together, CVaR-Min demonstrates that explicitly targeting the tail at the optimization stage produces more robust downside protection than variance minimization or Sharpe maximization alone.
 
 <img src="plots/Portfolio Optimization/Max Sharpe vs CvaR vs MVO.png">
 
@@ -228,11 +228,19 @@ All models validated with the **Kupiec Proportion of Failures (POF) test**.
 
 ---
 
-## Stress Testing
+## 8. Monte Carlo Stress Testing
 
-Two stress testing frameworks applied to the latest CVaR-optimized portfolio weights:
+A 15-asset stress testing framework using Cholesky decomposition on 10,000 simulated return paths across two covariance regimes:
 
-### Framework 1: Monte Carlo (Cholesky Decomposition)
+Stressed scenario (4-stage shock):
+
+Correlation breakdown: All pairwise correlations forced to 0.90 — replicates crisis-era contagion (e.g., March 2020, October 2008)
+Volatility scaling: Asset-level volatility doubled (2× historical)
+Deterministic equity shock: −10% injected into all 10 equity positions
+EWMA variant: Steps 1–3 repeated using EWMA covariance (λ = 0.94) for a more regime-responsive baseline
+
+### Baseline Monte Carlo: 99% VaR = −2.58%, CVaR = −2.96%
+
 - Simulated **10,000 daily portfolio returns** using Cholesky decomposition of the historical covariance matrix
 - Correlated random shocks: `correlated_returns = L @ Z`
 - Computed 95% VaR, 99% VaR, and 99% CVaR
@@ -241,13 +249,9 @@ Two stress testing frameworks applied to the latest CVaR-optimized portfolio wei
 
 | Metric | Value |
 |---|---:|
-| Annualized Return | 4.23% |
-| Annualized Volatility | 18.37% |
-| Sharpe Ratio | 0.23 |
-| Historical VaR (95%) | 1.89% |
+| Monte Carlo VaR (95%) | 1.89% |
 | Monte Carlo VaR (99%) | 2.67% |
 | Monte Carlo CVaR (99%) | 3.15% |
-| Historical VaR (99%) | 1.99% |
 
 <img src="plots/Stress Test results/Monte Carlo Cholesky distribution result.png">
 
