@@ -290,3 +290,13 @@ The stress-test results show that portfolio downside risk increases materially u
 <img src="plots/Stress Test results/EWMA stress test result.png">
 
 ---
+
+## Appendix:
+Using lastest portfolio optimized weights, invest in three portfolios. 
+- S&P 500
+- CVaR Min
+- MVO
+
+Result
+
+<img src="plots/Stress Test results/Cumulative Return of CVaR vs MVO vs SnP (2025).png">
