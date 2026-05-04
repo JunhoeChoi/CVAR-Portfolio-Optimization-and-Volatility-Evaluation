@@ -6,7 +6,7 @@
 
 ## Overview
 
-Built a full quantitative portfolio management pipeline in Python — from tail-risk optimization through risk attribution, volatility forecasting, and stress testing — across a 15-asset U.S. multi-asset universe (2020–2025). Implemented and backtested three competing strategies (CVaR minimization, Max Sharpe, MVO) under an identical weekly rebalancing framework with strict look-ahead bias controls. Validated risk models using GARCH-family volatility models, Kupiec POF backtesting, and Monte Carlo stress testing with Cholesky decomposition.
+Built a full quantitative portfolio management pipeline in Python — from tail-risk optimization through risk attribution, volatility forecasting, and stress testing — across a 15-asset U.S. multi-asset universe (2020–2025). Implemented and backtested three competing strategies (CVaR minimization, Max Sharpe, MVO) under an identical weekly rebalancing framework with strict look-ahead bias controls. Validated risk models using GARCH-family volatility models, VaR backtesting, and Monte Carlo stress testing with Cholesky decomposition.
 
 ---
 
@@ -14,7 +14,7 @@ Built a full quantitative portfolio management pipeline in Python — from tail-
  
 This project constructs and evaluates a **CVaR-minimizing portfolio** across a 15-asset U.S. multi-asset universe (2020–2025), benchmarked against Max Sharpe and mean-variance strategies. Portfolio weights are re-optimized weekly using a 26-week rolling window via the Rockafellar–Uryasev linear programming formulation, with strict look-ahead bias controls. Over the 5-year backtest — spanning COVID-19, the 2022 Fed rate shock, and the 2023–24 AI-driven rally — the CVaR strategy delivered a **Sharpe ratio of 1.49** and **annualized volatility of 13.64%**, outperforming the Max Sharpe benchmark on both metrics despite lower absolute returns (20.32% vs. 26.33%).
  
-Risk is measured and validated at multiple layers: historical VaR/CVaR with Kupiec backtesting, GARCH-family conditional volatility models (GARCH(1,1), GJR-GARCH, SVR-GARCH), and a Monte Carlo stress testing framework using Cholesky decomposition. The SVR-GARCH hybrid achieves the best out-of-sample volatility forecast accuracy (RMSE: 0.002809), reducing error by ~30% versus the GARCH(1,1) baseline. Under a fully stressed scenario — correlation breakdown to 0.90, 2× volatility scaling, and a −10% equity shock — the 99% portfolio VaR widens from −2.58% to −12.06%, quantifying the tail amplification that historical VaR alone cannot capture.
+Risk is measured and validated at multiple layers: historical VaR/CVaR backtesting, GARCH-family conditional volatility models (GARCH(1,1), GJR-GARCH, SVR-GARCH), and a Monte Carlo stress testing framework using Cholesky decomposition. The SVR-GARCH hybrid achieves the best out-of-sample volatility forecast accuracy (RMSE: 0.002809), reducing error by ~30% versus the GARCH(1,1) baseline. Under a fully stressed scenario — correlation breakdown to 0.90, 2× volatility scaling, and a −10% equity shock — the 99% portfolio VaR widens from −2.58% to −12.06%, quantifying the tail amplification that historical VaR alone cannot capture.
 
 ---
 
@@ -239,7 +239,7 @@ Volatility scaling: Asset-level volatility doubled (2× historical)
 Deterministic equity shock: −10% injected into all 10 equity positions
 EWMA variant: Steps 1–3 repeated using EWMA covariance (λ = 0.94) for a more regime-responsive baseline
 
-### Baseline Monte Carlo: 99% VaR = −2.58%, CVaR = −2.96%
+### Baseline Monte Carlo: 99% VaR = −2.67%, CVaR = −3.15%
 
 - Simulated **10,000 daily portfolio returns** using Cholesky decomposition of the historical covariance matrix
 - Correlated random shocks: `correlated_returns = L @ Z`
@@ -247,15 +247,18 @@ EWMA variant: Steps 1–3 repeated using EWMA covariance (λ = 0.94) for a more 
 
 #### Result
 
-| Metric | Value |
-|---|---:|
-| Monte Carlo VaR (95%) | 1.89% |
-| Monte Carlo VaR (99%) | 2.67% |
-| Monte Carlo CVaR (99%) | 3.15% |
+| Metric | CVaR | MVO |
+|---|---|---:|
+| Monte Carlo VaR (95%) | 1.89% | 1.86% |
+| Monte Carlo VaR (99%) | 2.67% | 2.68% |
+| Monte Carlo CVaR (99%) | 3.15% | 3.15% |
 
-<img src="plots/Stress Test results/Monte Carlo Cholesky distribution result.png">
+**CVaR**
+<img src="plots/Stress Test results/Simulated Portfolio return (CVaR).png">
 
-The baseline Monte Carlo Cholesky simulation estimates a 99% Monte Carlo VaR of 2.67% and a 99% Monte Carlo CVaR of 3.15%. These simulated tail-risk measures are higher than the 99% Historical VaR of 1.99%, suggesting that the covariance-based simulation captures a more conservative downside risk profile than the historical empirical quantile alone.
+**MVO**
+<img src="plots/Stress Test results/Simulated Portfolio return (MVO).png">
+
 
 ---
 
@@ -273,17 +276,17 @@ Compared Normal vs. Stressed 99% VaR to quantify tail risk amplification under c
 
 #### Stress Test Results
 
-| Scenario | 99% Stress VaR | 99% Baseline Monte Carlo VaR | 99% Historical VaR | Interpretation |
-|---|---:|---:|---:|---|
-| Historical Volatility-Based Stress Test | 12.85% | 2.67% | 1.72% | Crisis stress scenario using historical volatility inputs before applying correlation breakdown, volatility amplification, and an equity-sector shock |
-| EWMA Volatility-Based Stress Test | 11.08% | 2.67% | 1.72% | Same crisis stress scenario using EWMA volatility inputs to incorporate recent volatility dynamics |
+| Scenario | 99% Stress VaR | 99% Baseline Monte Carlo VaR | Interpretation |
+|---|---:|---:|:---:|
+| Benchmark Stress Test | 12.85% | 2.67% | Stress scenario using historical volatility before applying stress factors |
+| EWMA Volatility-Based Stress Test | 11.08% | 2.67% | Stress scenario with EWMA volatility to handle recent volatility dynamics |
 
 The stress-test results show that portfolio downside risk increases materially under stressed covariance assumptions. The baseline 99% Monte Carlo VaR is 2.67%, while the estimated 99% Stress VaR rises to 12.85% under the stressed Monte Carlo Cholesky scenario and 11.08% under the EWMA-based stress scenario. This indicates that tail losses become significantly larger when the portfolio return distribution is shifted under stressed volatility and correlation conditions.
 
 * Historical Volatility-Based Stress Test
-<img src="plots/Stress Test results/EWMA stress test result.png">
+<img src="plots/Stress Test results/Monte Carlo Cholesky distribution result.png">
 
 * EWMA Volatility-Based Stress Test
-<img src="plots/Stress Test results/Stress test result.png">
+<img src="plots/Stress Test results/EWMA stress test result.png">
 
 ---
